@@ -30,3 +30,4 @@ A Python menu-driven project that demonstrates:
 
 ```bash
 python functional_treat.py
+```
