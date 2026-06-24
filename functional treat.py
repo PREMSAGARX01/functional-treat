@@ -1,348 +1,367 @@
-"""
-Data Analyzer and Transformer Program
+# ==========================================
+# Functional Treat - Data Analyzer & Transformer
+# ==========================================
 
-This program demonstrates:
-- built-in functions
-- user-defined functions
-- *args and **kwargs
-- __doc__
-- recursion
-- lambda
-- global keyword
-- returning multiple values
-- 1D and 2D list handling
-- sorting
-"""
+dataset_summary = {}
 
-data_1d = []
-data_2d = []
-summary = {"total": 0, "mean": 0}
-
+# ------------------------------------------
+# INPUT FUNCTIONS
+# ------------------------------------------
 
 def input_1d():
-    """Take 1D list input from the user."""
-    global data_1d
-
-    print("\n--- Input 1D Data ---")
-    text = input("Enter numbers separated by spaces: ").strip()
-
-    if text == "":
-        data_1d = []
-        print("No data entered.")
-        return
-
-    try:
-        data_1d = [int(x) for x in text.split()]
-        print("1D data stored successfully.")
-    except ValueError:
-        print("Only numbers are allowed.")
-        data_1d = []
+    """Input a 1D list from user"""
+    return list(map(int, input("Enter numbers separated by spaces: ").split()))
 
 
 def input_2d():
-    """Take 2D list input from the user."""
-    global data_2d
+    """Input a 2D list from user"""
 
-    print("\n--- Input 2D Data ---")
+    rows = int(input("Enter number of rows: "))
+    matrix = []
 
-    try:
-        rows = int(input("How many rows? "))
-        cols = int(input("How many columns in each row? "))
-    except ValueError:
-        print("Please enter valid numbers.")
-        return
-
-    temp = []
     for i in range(rows):
-        while True:
-            try:
-                row = input(f"Enter row {i + 1} values separated by spaces: ").strip()
-                values = [int(x) for x in row.split()]
+        row = list(map(int, input(f"Enter row {i+1}: ").split()))
+        matrix.append(row)
 
-                if len(values) != cols:
-                    print(f"Please enter exactly {cols} values.")
-                    continue
-
-                temp.append(values)
-                break
-            except ValueError:
-                print("Only numbers are allowed.")
-
-    data_2d = temp
-    print("2D data stored successfully.")
+    return matrix
 
 
-def update_summary():
-    """Update global summary values using the current 1D data."""
-    global summary
+# ------------------------------------------
+# BUILT-IN FUNCTIONS
+# ------------------------------------------
 
-    if len(data_1d) == 0:
-        summary = {"total": 0, "mean": 0}
-    else:
-        summary["total"] = sum(data_1d)
-        summary["mean"] = sum(data_1d) / len(data_1d)
+def display_summary(data):
+    """Display summary using built-in functions"""
 
-
-def show_summary():
-    """Display basic statistics using built-in functions."""
-    print("\n--- Data Summary ---")
-
-    if len(data_1d) == 0:
-        print("No 1D data available.")
-        return
-
-    print("Total elements:", len(data_1d))
-    print("Minimum value:", min(data_1d))
-    print("Maximum value:", max(data_1d))
-    print("Sum of values:", sum(data_1d))
-    print("Average value:", round(sum(data_1d) / len(data_1d), 2))
-
-    update_summary()
+    print("\n----- DATA SUMMARY -----")
+    print("Total Elements :", len(data))
+    print("Minimum Value  :", min(data))
+    print("Maximum Value  :", max(data))
+    print("Sum            :", sum(data))
+    print("Average        :", round(sum(data) / len(data), 2))
 
 
-def get_statistics():
-    """Return multiple values: minimum, maximum, sum and average."""
-    if len(data_1d) == 0:
-        return None, None, None, None
+# ------------------------------------------
+# USER DEFINED FUNCTIONS
+# ------------------------------------------
 
-    minimum = min(data_1d)
-    maximum = max(data_1d)
-    total = sum(data_1d)
-    average = total / len(data_1d)
-
-    return minimum, maximum, total, average
+def calculate_average(data):
+    """Calculate average"""
+    return sum(data) / len(data)
 
 
-def display_statistics():
-    """Show the values returned by get_statistics()."""
-    print("\n--- Dataset Statistics ---")
+def find_duplicates(data):
+    """Find duplicate values"""
 
-    minimum, maximum, total, average = get_statistics()
+    duplicates = []
 
-    if minimum is None:
-        print("No 1D data available.")
-        return
+    for item in data:
+        if data.count(item) > 1 and item not in duplicates:
+            duplicates.append(item)
 
-    print("Minimum value:", minimum)
-    print("Maximum value:", maximum)
-    print("Sum of values:", total)
-    print("Average value:", round(average, 2))
+    return duplicates
 
+
+def unique_values(data):
+    """Return unique values"""
+    return list(set(data))
+
+
+# ------------------------------------------
+# *ARGS
+# ------------------------------------------
+
+def show_values(*args):
+    """Display values using *args"""
+
+    print("\nValues received using *args:")
+
+    for value in args:
+        print(value)
+
+
+# ------------------------------------------
+# **KWARGS
+# ------------------------------------------
+
+def display_info(**kwargs):
+    """Display dataset information"""
+
+    print("\nDataset Information")
+
+    for key, value in kwargs.items():
+        print(f"{key} : {value}")
+
+
+# ------------------------------------------
+# RECURSION
+# ------------------------------------------
 
 def factorial(n):
-    """Calculate factorial using recursion."""
-    if n < 0:
-        return None
+    """Calculate factorial recursively"""
+
     if n == 0 or n == 1:
         return 1
+
     return n * factorial(n - 1)
 
 
-def show_factorial():
-    """Ask the user for a number and display factorial."""
-    print("\n--- Factorial (Recursion) ---")
+# ------------------------------------------
+# LAMBDA FUNCTIONS
+# ------------------------------------------
 
-    try:
-        n = int(input("Enter a number: "))
-    except ValueError:
-        print("Please enter a valid number.")
-        return
+def filter_threshold(data):
+    """Filter data using lambda"""
 
-    result = factorial(n)
+    threshold = int(input("Enter threshold value: "))
 
-    if result is None:
-        print("Factorial is not defined for negative numbers.")
-    else:
-        print(f"Factorial of {n} is: {result}")
+    filtered = list(filter(lambda x: x >= threshold, data))
+
+    print("Filtered Data :", filtered)
 
 
-def filter_data():
-    """Filter 1D data using lambda and filter()."""
-    print("\n--- Filter Data Using Lambda ---")
+def square_data(data):
+    """Transform data using lambda and map"""
 
-    if len(data_1d) == 0:
-        print("No 1D data available.")
-        return
+    result = list(map(lambda x: x * x, data))
 
-    try:
-        threshold = int(input("Enter threshold value: "))
-    except ValueError:
-        print("Please enter a valid number.")
-        return
-
-    condition = lambda x: x >= threshold
-    result = list(filter(condition, data_1d))
-
-    print(f"Filtered values (>= {threshold}):")
-    if len(result) == 0:
-        print("No matching values.")
-    else:
-        print(", ".join(map(str, result)))
+    print("Squared Data :", result)
 
 
-def sort_data():
-    """Sort 1D data and 2D rows."""
-    print("\n--- Sort Data ---")
+# ------------------------------------------
+# GLOBAL VARIABLE
+# ------------------------------------------
 
-    if len(data_1d) == 0 and len(data_2d) == 0:
-        print("No data available.")
-        return
+def update_global_summary(data):
+    """Store summary in global variable"""
 
-    print("1. Sort 1D data")
-    print("2. Sort 2D rows")
-    choice = input("Enter your choice: ")
+    global dataset_summary
+
+    dataset_summary = {
+        "Count": len(data),
+        "Sum": sum(data),
+        "Average": round(sum(data) / len(data), 2)
+    }
+
+
+def show_global_summary():
+    """Display global summary"""
+
+    global dataset_summary
+
+    print("\nGlobal Dataset Summary")
+
+    for key, value in dataset_summary.items():
+        print(key, ":", value)
+
+
+# ------------------------------------------
+# RETURN MULTIPLE VALUES
+# ------------------------------------------
+
+def statistics(data):
+    """Return multiple values"""
+
+    minimum = min(data)
+    maximum = max(data)
+    average = round(sum(data) / len(data), 2)
+
+    return minimum, maximum, average
+
+
+# ------------------------------------------
+# SORTING
+# ------------------------------------------
+
+def sort_1d(data):
+    """Sort 1D list"""
+
+    temp = data.copy()
+
+    print("\n1. Ascending")
+    print("2. Descending")
+
+    choice = input("Enter choice: ")
 
     if choice == "1":
-        print("1. Ascending")
-        print("2. Descending")
-        order = input("Enter order: ")
-
-        if len(data_1d) == 0:
-            print("No 1D data available.")
-            return
-
-        if order == "1":
-            data_1d.sort()
-            print("Sorted 1D data:", ", ".join(map(str, data_1d)))
-        elif order == "2":
-            data_1d.sort(reverse=True)
-            print("Sorted 1D data:", ", ".join(map(str, data_1d)))
-        else:
-            print("Invalid order.")
-
-    elif choice == "2":
-        if len(data_2d) == 0:
-            print("No 2D data available.")
-            return
-
-        print("1. Sort rows by first value")
-        print("2. Sort rows by row sum")
-
-        option = input("Enter your choice: ")
-
-        if option == "1":
-            sorted_rows = sorted(data_2d, key=lambda row: row[0])
-            print("\nSorted 2D data:")
-            display_2d_list(sorted_rows)
-
-        elif option == "2":
-            sorted_rows = sorted(data_2d, key=sum)
-            print("\nSorted 2D data:")
-            display_2d_list(sorted_rows)
-
-        else:
-            print("Invalid choice.")
+        temp.sort()
     else:
-        print("Invalid choice.")
+        temp.sort(reverse=True)
+
+    print("Sorted Data :", temp)
 
 
-def display_2d_list(arr):
-    """Display a 2D list in grid form."""
-    print("\n--- 2D Data ---")
+def sort_2d(data):
+    """Sort rows of 2D list"""
 
-    if len(arr) == 0:
-        print("No 2D data available.")
-        return
+    sorted_matrix = sorted(data, key=lambda row: sum(row))
 
-    for row in arr:
-        print(" | ".join(map(str, row)))
+    print("\nSorted 2D List")
 
-
-def show_args(*args):
-    """Display values passed using *args."""
-    print("\n--- *args Demo ---")
-    if len(args) == 0:
-        print("No values passed.")
-        return
-
-    print("Values passed:")
-    for item in args:
-        print(item)
+    for row in sorted_matrix:
+        print(row)
 
 
-def show_kwargs(**kwargs):
-    """Display key-value pairs passed using **kwargs."""
-    print("\n--- **kwargs Demo ---")
-    if len(kwargs) == 0:
-        print("No key-value pairs passed.")
-        return
+# ------------------------------------------
+# DISPLAY 2D GRID
+# ------------------------------------------
 
-    for key, value in kwargs.items():
-        print(f"{key}: {value}")
+def display_2d(data):
+    """Display 2D list in grid format"""
+
+    print("\n2D LIST")
+
+    for row in data:
+        for value in row:
+            print(f"{value:5}", end="")
+        print()
 
 
-def show_docstrings():
-    """Print the docstring of each function."""
-    print("\n--- Function Descriptions (__doc__) ---")
+# ------------------------------------------
+# DOCUMENTATION (__doc__)
+# ------------------------------------------
+
+def show_docs():
+    """Display documentation strings"""
+
     functions = [
-        input_1d, input_2d, update_summary, show_summary, get_statistics,
-        display_statistics, factorial, show_factorial, filter_data,
-        sort_data, display_2d_list, show_args, show_kwargs
+        input_1d,
+        input_2d,
+        display_summary,
+        calculate_average,
+        find_duplicates,
+        unique_values,
+        show_values,
+        display_info,
+        factorial,
+        filter_threshold,
+        square_data,
+        update_global_summary,
+        statistics,
+        sort_1d,
+        sort_2d,
+        display_2d
     ]
 
+    print("\nFUNCTION DOCUMENTATION")
+
     for func in functions:
-        print(f"\n{func.__name__}:")
+        print(f"\n{func.__name__}")
         print(func.__doc__)
 
 
-def show_menu():
-    """Display the main menu."""
-    print("\nWelcome to the Data Analyzer and Transformer Program")
-    print("\nMain Menu:")
-    print("1. Input 1D Data")
-    print("2. Input 2D Data")
-    print("3. Display Data Summary")
-    print("4. Calculate Factorial")
-    print("5. Filter Data by Threshold")
-    print("6. Sort Data")
-    print("7. Display Dataset Statistics")
-    print("8. Display 2D Data")
-    print("9. *args Demo")
-    print("10. **kwargs Demo")
-    print("11. Show Function Descriptions")
-    print("12. Exit Program")
+# ------------------------------------------
+# HELPER FUNCTION
+# ------------------------------------------
 
+def flatten(data):
+    """Convert 2D list into 1D list"""
+
+    if isinstance(data[0], list):
+        return [item for row in data for item in row]
+
+    return data
+
+
+# ------------------------------------------
+# MAIN PROGRAM
+# ------------------------------------------
+
+data = []
 
 while True:
-    show_menu()
-    choice = input("Please enter your choice: ")
+
+    print("\n================================")
+    print("DATA ANALYZER & TRANSFORMER")
+    print("================================")
+    print("1. Input 1D Data")
+    print("2. Input 2D Data")
+    print("3. Display Summary")
+    print("4. UDF Operations")
+    print("5. *args Example")
+    print("6. **kwargs Example")
+    print("7. Factorial (Recursion)")
+    print("8. Lambda Operations")
+    print("9. Global Variable")
+    print("10. Return Multiple Values")
+    print("11. Sorting")
+    print("12. Display 2D Grid")
+    print("13. Show __doc__")
+    print("14. Exit")
+
+    choice = input("Enter choice: ")
 
     if choice == "1":
-        input_1d()
+        data = input_1d()
 
     elif choice == "2":
-        input_2d()
+        data = input_2d()
 
-    elif choice == "3":
-        show_summary()
-
-    elif choice == "4":
-        show_factorial()
-
-    elif choice == "5":
-        filter_data()
-
-    elif choice == "6":
-        sort_data()
-
-    elif choice == "7":
-        display_statistics()
-
-    elif choice == "8":
-        display_2d_list(data_2d)
-
-    elif choice == "9":
-        show_args(10, 20, 30, "hello", True)
-
-    elif choice == "10":
-        show_kwargs(name="Alice", age=20, grade="B+")
-
-    elif choice == "11":
-        show_docstrings()
-
-    elif choice == "12":
-        print("Thank you for using the Data Analyzer and Transformer Program. Goodbye!")
+    elif choice == "14":
+        print("Thank you. Program Ended.")
         break
 
     else:
-        print("Invalid choice. Try again.")
+
+        if not data:
+            print("Please input data first.")
+            continue
+
+        flat = flatten(data)
+
+        if choice == "3":
+            display_summary(flat)
+
+        elif choice == "4":
+            print("Average :", calculate_average(flat))
+            print("Duplicates :", find_duplicates(flat))
+            print("Unique Values :", unique_values(flat))
+
+        elif choice == "5":
+            show_values(10, 20, 30, 40, 50)
+
+        elif choice == "6":
+            display_info(
+                Count=len(flat),
+                Sum=sum(flat),
+                Average=round(sum(flat) / len(flat), 2)
+            )
+
+        elif choice == "7":
+            num = int(input("Enter number: "))
+            print("Factorial =", factorial(num))
+
+        elif choice == "8":
+            filter_threshold(flat)
+            square_data(flat)
+
+        elif choice == "9":
+            update_global_summary(flat)
+            show_global_summary()
+
+        elif choice == "10":
+            mn, mx, avg = statistics(flat)
+
+            print("Minimum :", mn)
+            print("Maximum :", mx)
+            print("Average :", avg)
+
+        elif choice == "11":
+
+            if isinstance(data[0], list):
+                sort_2d(data)
+            else:
+                sort_1d(data)
+
+        elif choice == "12":
+
+            if isinstance(data[0], list):
+                display_2d(data)
+            else:
+                print("Current data is not a 2D list.")
+
+        elif choice == "13":
+            show_docs()
+
+        else:
+            print("Invalid Choice")
